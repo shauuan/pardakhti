@@ -1,0 +1,98 @@
+name: build-windows
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.v.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        run: |
+          base=$(sed -nE 's/^version:[[:space:]]*([0-9]+\.[0-9]+)\..*/\1/p' pubspec.yaml)
+          if [ -z "$base" ]; then base="1.0"; fi
+          echo "name=$base.$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "Version: $base.$BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
+
+  windows:
+    name: Windows
+    needs: version
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      VERSION: ${{ needs.version.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Build Windows
+        run: |
+          flutter build windows --release \
+            --build-name="$VERSION" \
+            --build-number="$BUILD_NUMBER"
+
+      # سیستم مشتری ممکن است VC++ Runtime نداشته باشد
+      - name: Bundle Visual C++ runtime
+        run: |
+          cp /c/Windows/System32/msvcp140.dll build/windows/x64/runner/Release/ || true
+          cp /c/Windows/System32/vcruntime140.dll build/windows/x64/runner/Release/ || true
+          cp /c/Windows/System32/vcruntime140_1.dll build/windows/x64/runner/Release/ || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pardakhti-${{ env.VERSION }}-windows
+          path: build/windows/x64/runner/Release
+
+  release:
+    name: Release
+    needs: [version, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.version.outputs.name }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: pardakhti-${{ env.VERSION }}-windows
+          path: release-files
+
+      - name: Package zip
+        run: |
+          mkdir dist
+          (cd release-files && zip -qr "../dist/Pardakhti-$VERSION-Windows.zip" .)
+          ls -la dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: پرداختی ${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
+          body: |
+            بیلد ویندوز پرداختی — نسخه ${{ env.VERSION }}
+
+            فایل zip را دانلود و از پوشه، `pardakhti.exe` را اجرا کنید.
+          files: dist/Pardakhti-${{ env.VERSION }}-Windows.zip
