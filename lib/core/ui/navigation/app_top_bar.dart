@@ -9,7 +9,6 @@ import '../../theme/app_radii.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/theme_mode_provider.dart';
 import '../../utils/persian_digits.dart';
-import '../badges/status_badge.dart';
 
 class AppTopBar extends ConsumerWidget {
   const AppTopBar({
@@ -40,11 +39,6 @@ class AppTopBar extends ConsumerWidget {
       child: Row(
         children: [
           Text(title, style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(width: AppSpacing.sm),
-          const StatusBadge(
-            label: AppStrings.sampleBadge,
-            tone: StatusBadgeTone.warning,
-          ),
           const Spacer(),
           _Pill(
             icon: Icons.calendar_month_outlined,

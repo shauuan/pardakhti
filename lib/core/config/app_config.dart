@@ -2,7 +2,7 @@
 abstract final class AppConfig {
   static const String appName = 'پرداختی';
   static const String appNameEn = 'Pardakhti';
-  static const String version = '1.0.0';
+  static const String version = '1.1.0';
   static const String orgId = 'com.pardakhti';
 
   /// حداقل اندازه پنجره (پیکسل)

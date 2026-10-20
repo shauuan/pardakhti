@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_strings.dart';
+import '../../../core/theme/app_motion.dart';
 import '../../../core/ui/feedback/app_toast.dart';
 import '../../../core/ui/navigation/app_sidebar.dart';
 import '../../../core/ui/navigation/app_top_bar.dart';
@@ -32,50 +34,53 @@ class _AppShellState extends State<AppShell> {
       route: '/',
     ),
     SidebarItem(
-      id: 'showcase',
-      label: AppStrings.navShowcase,
-      icon: Icons.widgets_outlined,
-      route: '/showcase',
-    ),
-    SidebarItem(
       id: 'employees',
       label: AppStrings.navEmployees,
       icon: Icons.people_outline,
-      enabled: false,
+      route: '/employees',
     ),
     SidebarItem(
       id: 'inputs',
       label: AppStrings.navMonthlyInputs,
       icon: Icons.table_chart_outlined,
-      enabled: false,
+      route: '/inputs',
     ),
     SidebarItem(
       id: 'payroll',
       label: AppStrings.navPayroll,
       icon: Icons.calculate_outlined,
-      enabled: false,
-    ),
-    SidebarItem(
-      id: 'reports',
-      label: AppStrings.navReports,
-      icon: Icons.description_outlined,
-      enabled: false,
+      route: '/payroll',
     ),
     SidebarItem(
       id: 'settings',
       label: AppStrings.navSettings,
       icon: Icons.settings_outlined,
-      enabled: false,
+      route: '/settings',
+    ),
+    SidebarItem(
+      id: 'showcase',
+      label: AppStrings.navShowcase,
+      icon: Icons.widgets_outlined,
+      route: '/showcase',
     ),
   ];
 
   String get _selectedId {
-    if (widget.location.startsWith('/showcase')) return 'showcase';
+    final path = widget.location;
+    if (path.startsWith('/employees')) return 'employees';
+    if (path.startsWith('/inputs')) return 'inputs';
+    if (path.startsWith('/payroll')) return 'payroll';
+    if (path.startsWith('/settings')) return 'settings';
+    if (path.startsWith('/showcase')) return 'showcase';
     return 'dashboard';
   }
 
   String get _title {
     return switch (_selectedId) {
+      'employees' => AppStrings.navEmployees,
+      'inputs' => AppStrings.navMonthlyInputs,
+      'payroll' => AppStrings.navPayroll,
+      'settings' => AppStrings.navSettings,
       'showcase' => AppStrings.navShowcase,
       _ => AppStrings.dashboardTitle,
     };
@@ -91,23 +96,22 @@ class _AppShellState extends State<AppShell> {
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.keyK, control: true): () {
-          AppToast.show(
-            context,
-            message: 'جستجوی سراسری در مراحل بعد فعال می‌شود',
-          );
+          AppToast.show(context, message: AppStrings.searchHint);
         },
         const SingleActivator(LogicalKeyboardKey.keyS, control: true): () {
           AppToast.show(
             context,
-            message: 'ذخیره — در این مرحله نمونه است',
-            tone: AppToastTone.success,
+            message: 'از دکمه ذخیره در صفحه استفاده کنید',
+            tone: AppToastTone.info,
           );
+        },
+        const SingleActivator(LogicalKeyboardKey.keyN, control: true): () {
+          context.go('/employees');
         },
       },
       child: Focus(
         autofocus: true,
         child: Scaffold(
-          // در RTL اولین فرزند سمت راست قرار می‌گیرد → سایدبار راست
           body: Row(
             children: [
               AppSidebar(
@@ -127,7 +131,20 @@ class _AppShellState extends State<AppShell> {
                         message: AppStrings.searchHint,
                       ),
                     ),
-                    Expanded(child: widget.child),
+                    Expanded(
+                      child: KeyedSubtree(
+                        key: ValueKey(widget.location),
+                        child: widget.child,
+                      )
+                          .animate()
+                          .fadeIn(duration: AppMotion.normal)
+                          .slideX(
+                            begin: 0.01,
+                            end: 0,
+                            duration: AppMotion.normal,
+                            curve: AppMotion.curve,
+                          ),
+                    ),
                   ],
                 ),
               ),

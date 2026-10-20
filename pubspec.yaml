@@ -1,7 +1,7 @@
 name: pardakhti
 description: نرم‌افزار حقوق و دستمزد دسکتاپ — پرداختی
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.8.1
@@ -12,34 +12,40 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # آیکون‌های Material
   cupertino_icons: ^1.0.8
-
-  # مدیریت state یکدست در کل اپ
   flutter_riverpod: ^2.6.1
-
-  # ناوبری declarative و deep-link پذیر
   go_router: ^14.8.1
-
-  # کنترل اندازه/موقعیت پنجره ویندوز
   window_manager: ^0.4.3
-
-  # نمودار داشبورد
   fl_chart: ^0.70.2
-
-  # انیمیشن‌های ظریف UI
   flutter_animate: ^4.5.2
-
-  # تاریخ شمسی (نمایش و محاسبات روز ماه)
   shamsi_date: ^1.0.4
-
-  # قالب‌بندی اعداد و locale
   intl: ^0.20.2
+
+  # دیتابیس SQLite با migration
+  drift: ^2.26.0
+  drift_flutter: ^0.2.4
+  sqlite3: ^2.7.5
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+  # هش رمز عبور
+  crypto: ^3.0.6
+
+  # ایمپورت/اکسپورت
+  excel: ^4.0.6
+  csv: ^6.0.0
+  file_picker: ^8.3.7
+
+  # فیش و گزارش PDF
+  pdf: ^3.11.3
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  drift_dev: ^2.26.0
+  build_runner: ^2.4.15
 
 flutter:
   uses-material-design: true
@@ -47,6 +53,7 @@ flutter:
   assets:
     - assets/images/
     - assets/logo/
+    - assets/fonts/
 
   fonts:
     - family: Vazirmatn

@@ -118,19 +118,6 @@ class AppSidebar extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            child: collapsed
-                ? const SizedBox.shrink()
-                : const Align(
-                    alignment: Alignment.centerRight,
-                    child: StatusBadge(
-                      label: AppStrings.sampleBadge,
-                      tone: StatusBadgeTone.warning,
-                      icon: Icons.science_outlined,
-                    ),
-                  ),
-          ),
           const SizedBox(height: AppSpacing.sm),
           Expanded(
             child: ListView(

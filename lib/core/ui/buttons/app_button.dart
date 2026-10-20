@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_motion.dart';
 import '../../theme/app_radii.dart';
+import '../../theme/app_shadows.dart';
 import '../../theme/app_spacing.dart';
 
 enum AppButtonVariant { primary, secondary, ghost, danger }
@@ -111,15 +112,22 @@ class _AppButtonState extends State<AppButton> {
               color: bg,
               borderRadius: AppRadii.mdAll,
               border: Border.all(color: border),
-              boxShadow: _focused
-                  ? [
-                      BoxShadow(
-                        color: colors.focusRing,
-                        blurRadius: 0,
-                        spreadRadius: 3,
-                      ),
-                    ]
-                  : null,
+              boxShadow: [
+                if (_focused)
+                  BoxShadow(
+                    color: colors.focusRing,
+                    blurRadius: 0,
+                    spreadRadius: 3,
+                  ),
+                if (enabled &&
+                    _hovered &&
+                    widget.variant == AppButtonVariant.primary)
+                  ...AppShadows.primaryGlow(colors.primary),
+                if (enabled &&
+                    _hovered &&
+                    widget.variant == AppButtonVariant.danger)
+                  ...AppShadows.primaryGlow(colors.danger),
+              ],
             ),
             child: child,
           ),

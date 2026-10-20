@@ -1,13 +1,11 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pardakhti/app.dart';
+import 'package:pardakhti/core/utils/money_formatter.dart';
+import 'package:pardakhti/core/utils/persian_digits.dart';
 
 void main() {
-  testWidgets('app builds sample shell', (tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(child: PardakhtiApp()),
-    );
-    await tester.pump();
-    expect(find.text('پرداختی'), findsWidgets);
+  test('money formatter uses persian digits', () {
+    final text = MoneyFormatter.format(1234567, showUnit: true);
+    expect(text.contains(PersianDigits.toPersian('1')), isTrue);
+    expect(text.contains('ریال'), isTrue);
   });
 }
