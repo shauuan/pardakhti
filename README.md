@@ -6,7 +6,18 @@
 
 **مرحله ۱:** اسکلت پروژه + Design System + کامپوننت‌ها + صفحات نمونه (بدون دیتابیس/محاسبه).
 
-## اجرا
+## بیلد ویندوز (مثل املاک — روی GitHub Actions)
+
+بدون نصب Visual Studio روی سیستم خودتان:
+
+1. کد را به GitHub پوش کنید (برنچ `main`)
+2. از تب **Actions** بیلد `build-windows` را ببینید
+3. بعد از اتمام: **Artifacts** یا **Releases** → فایل `Pardakhti-*-Windows.zip`
+4. zip را باز کنید و `pardakhti.exe` را اجرا کنید
+
+دستی هم می‌توانید از Actions → Run workflow بزنید (`workflow_dispatch`).
+
+## اجرای محلی (نیاز به VS Build Tools)
 
 ```bash
 flutter pub get
