@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart' show Value;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,10 +9,13 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/ui/buttons/app_button.dart';
+import '../../../../core/ui/feedback/app_dialog.dart';
 import '../../../../core/ui/feedback/app_toast.dart';
 import '../../../../core/ui/layout/app_card.dart';
 import '../../../../core/utils/persian_digits.dart';
 import '../../../payroll/presentation/payroll_providers.dart';
+import '../../../reports/data/excel_reports.dart';
+import '../../data/import_service.dart';
 
 class MonthlyInputsPage extends ConsumerStatefulWidget {
   const MonthlyInputsPage({super.key});
@@ -66,6 +70,58 @@ class _MonthlyInputsPageState extends ConsumerState<MonthlyInputsPage> {
     });
   }
 
+  Future<void> _import() async {
+    final pick = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: const ['xlsx', 'xls', 'csv'],
+    );
+    if (pick == null || pick.files.isEmpty || pick.files.first.path == null) {
+      return;
+    }
+    final path = pick.files.first.path!;
+    final year = ref.read(selectedYearProvider);
+    final month = ref.read(selectedMonthProvider);
+    final importer = ImportService(ref.read(databaseProvider));
+    try {
+      final preview = await importer.previewFile(path);
+      final errors = preview.where((r) => !r.ok).toList();
+      final okCount = preview.where((r) => r.ok).length;
+      if (!mounted) return;
+      final msg = StringBuffer('ردیف معتبر: $okCount');
+      if (errors.isNotEmpty) {
+        msg.writeln('\nخطاها:');
+        for (final e in errors.take(8)) {
+          msg.writeln('ردیف ${e.rowIndex}: ${e.error}');
+        }
+      }
+      final go = await AppDialog.confirm(
+        context,
+        title: 'پیش‌نمایش ایمپورت',
+        body: msg.toString(),
+        confirmLabel: 'اعمال',
+      );
+      if (go == true) {
+        final n = await importer.apply(
+          year: year,
+          month: month,
+          rows: preview,
+        );
+        await _load();
+        if (mounted) {
+          AppToast.show(
+            context,
+            message: '$n ردیف اعمال شد',
+            tone: AppToastTone.success,
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        AppToast.show(context, message: '$e', tone: AppToastTone.error);
+      }
+    }
+  }
+
   Future<void> _save() async {
     final db = ref.read(databaseProvider);
     for (final row in _rows) {
@@ -112,6 +168,27 @@ class _MonthlyInputsPageState extends ConsumerState<MonthlyInputsPage> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const Spacer(),
+                  AppButton(
+                    label: 'نمونه Excel',
+                    variant: AppButtonVariant.ghost,
+                    icon: Icons.download_outlined,
+                    onPressed: () async {
+                      final bytes = ExcelReports.sampleMonthlyInput();
+                      await FilePicker.platform.saveFile(
+                        dialogTitle: 'ذخیره نمونه',
+                        fileName: 'sample-monthly-input.xlsx',
+                        bytes: bytes,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  AppButton(
+                    label: 'ایمپورت',
+                    variant: AppButtonVariant.secondary,
+                    icon: Icons.upload_file_outlined,
+                    onPressed: _import,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
                   AppButton(
                     label: 'ذخیره (Ctrl+S)',
                     icon: Icons.save_outlined,

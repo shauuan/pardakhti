@@ -7,6 +7,7 @@ import '../../theme/app_motion.dart';
 import '../../theme/app_radii.dart';
 import '../../theme/app_spacing.dart';
 import '../badges/status_badge.dart';
+import '../branding/app_logo.dart';
 
 class SidebarItem {
   const SidebarItem({
@@ -69,22 +70,7 @@ class AppSidebar extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: colors.primary,
-                    borderRadius: AppRadii.mdAll,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'پ',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: colors.textOnPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                  ),
-                ),
+                const AppLogo(size: 36),
                 if (!collapsed) ...[
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(

@@ -2,8 +2,9 @@
 abstract final class AppConfig {
   static const String appName = 'پرداختی';
   static const String appNameEn = 'Pardakhti';
-  static const String version = '1.1.0';
+  static const String version = '1.2.0';
   static const String orgId = 'com.pardakhti';
+  static const String logoAsset = 'assets/logo/pardakhti_logo.png';
 
   /// حداقل اندازه پنجره (پیکسل)
   static const double minWindowWidth = 1200;

@@ -52,6 +52,12 @@ class _AppShellState extends State<AppShell> {
       route: '/payroll',
     ),
     SidebarItem(
+      id: 'reports',
+      label: AppStrings.navReports,
+      icon: Icons.description_outlined,
+      route: '/reports',
+    ),
+    SidebarItem(
       id: 'settings',
       label: AppStrings.navSettings,
       icon: Icons.settings_outlined,
@@ -70,6 +76,7 @@ class _AppShellState extends State<AppShell> {
     if (path.startsWith('/employees')) return 'employees';
     if (path.startsWith('/inputs')) return 'inputs';
     if (path.startsWith('/payroll')) return 'payroll';
+    if (path.startsWith('/reports')) return 'reports';
     if (path.startsWith('/settings')) return 'settings';
     if (path.startsWith('/showcase')) return 'showcase';
     return 'dashboard';
@@ -80,6 +87,7 @@ class _AppShellState extends State<AppShell> {
       'employees' => AppStrings.navEmployees,
       'inputs' => AppStrings.navMonthlyInputs,
       'payroll' => AppStrings.navPayroll,
+      'reports' => AppStrings.navReports,
       'settings' => AppStrings.navSettings,
       'showcase' => AppStrings.navShowcase,
       _ => AppStrings.dashboardTitle,

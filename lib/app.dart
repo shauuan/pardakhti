@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_provider.dart';
+import 'features/auth/presentation/auth_gate.dart';
 import 'router/app_router.dart';
 
 class PardakhtiApp extends ConsumerWidget {
@@ -33,7 +34,7 @@ class PardakhtiApp extends ConsumerWidget {
       builder: (context, child) {
         return Directionality(
           textDirection: TextDirection.rtl,
-          child: child ?? const SizedBox.shrink(),
+          child: AuthGate(child: child ?? const SizedBox.shrink()),
         );
       },
       routerConfig: appRouter,

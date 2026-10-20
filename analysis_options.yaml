@@ -22,3 +22,5 @@ linter:
     unawaited_futures: true
     directives_ordering: true
     sort_child_properties_last: true
+    # در desktop با mounted چک می‌شود؛ سخت‌گیری این قانون نویز بی‌فایده می‌سازد
+    use_build_context_synchronously: false

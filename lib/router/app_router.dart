@@ -5,6 +5,7 @@ import '../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../features/employees/presentation/pages/employees_page.dart';
 import '../features/monthly_inputs/presentation/pages/monthly_inputs_page.dart';
 import '../features/payroll/presentation/pages/payroll_page.dart';
+import '../features/reports/presentation/pages/reports_page.dart';
 import '../features/settings/presentation/pages/settings_page.dart';
 import '../features/shell/presentation/app_shell.dart';
 import '../features/showcase/presentation/pages/components_showcase_page.dart';
@@ -51,6 +52,15 @@ final appRouter = GoRouter(
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const PayrollPage(),
+            transitionsBuilder: _fadeSlide,
+          ),
+        ),
+        GoRoute(
+          path: '/reports',
+          name: 'reports',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const ReportsPage(),
             transitionsBuilder: _fadeSlide,
           ),
         ),
